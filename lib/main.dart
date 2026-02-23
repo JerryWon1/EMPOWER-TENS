@@ -75,6 +75,25 @@ class _TensHomePageState extends State<TensHomePage> {
     });
   }
 
+  double _computePowerReading(int elapsed) {
+    switch (_selectedMode) {
+      case 'burst':
+        // 2 seconds on at full power, 1 second off, repeating
+        return (elapsed % 3) < 2 ? _powerLevel.toDouble() : 0;
+      case 'modulation':
+        // Triangle wave between 60% and 100% of power level, 6-second period
+        final cycle = elapsed % 6;
+        final fraction = cycle < 3 ? cycle / 3.0 : (6 - cycle) / 3.0;
+        return _powerLevel * (0.6 + 0.4 * fraction);
+      case 'massage':
+        // Alternates between full power and 50% every second
+        return (elapsed % 2) == 0 ? _powerLevel.toDouble() : _powerLevel * 0.5;
+      case 'continuous':
+      default:
+        return _powerLevel.toDouble();
+    }
+  }
+
   void _startTimer() {
     final total = _timerMinutes * 60 + _timerSeconds;
     if (total <= 0) return;
@@ -83,12 +102,12 @@ class _TensHomePageState extends State<TensHomePage> {
       _remainingSeconds = total;
       _totalSeconds = total;
       _elapsedSeconds = 0;
-      _powerReadings = [FlSpot(0, _powerLevel.toDouble())];
+      _powerReadings = [FlSpot(0, _computePowerReading(0))];
     });
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _elapsedSeconds++;
-        _powerReadings.add(FlSpot(_elapsedSeconds.toDouble(), _powerLevel.toDouble()));
+        _powerReadings.add(FlSpot(_elapsedSeconds.toDouble(), _computePowerReading(_elapsedSeconds)));
         if (_remainingSeconds > 0) {
           _remainingSeconds--;
         }
