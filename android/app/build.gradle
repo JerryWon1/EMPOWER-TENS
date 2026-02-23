@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.empower_tens"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

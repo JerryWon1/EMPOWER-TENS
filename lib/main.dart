@@ -45,6 +45,7 @@ class _TensHomePageState extends State<TensHomePage> {
   int _elapsedSeconds = 0;
   int _totalSeconds = 0;
   Timer? _timer;
+  static const int _minChartDataPoints = 2;
 
   final Map<String, String> _modeLabels = {
     'continuous': 'Continuous',
@@ -536,7 +537,7 @@ class _TensHomePageState extends State<TensHomePage> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: _powerReadings.length < 2
+            child: _powerReadings.length < _minChartDataPoints
                 ? const Center(child: Text('Collecting data...', style: TextStyle(color: Colors.grey)))
                 : LineChart(
                     LineChartData(
